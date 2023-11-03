@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "691358675671",
+    "project_id": "padelpro360",
+    "storage_bucket": "padelpro360.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691358675671:android:843eb154708e55f826f692",
+        "android_client_info": {
+          "package_name": "com.padelpro360"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnMTAoz7pEAp_yynl10jNELw7xEkrBscw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
