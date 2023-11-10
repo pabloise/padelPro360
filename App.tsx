@@ -1,28 +1,28 @@
-import {StyleSheet, Text, SafeAreaView, Button} from 'react-native';
 import React, {useEffect} from 'react';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  Button,
+  View,
+  Image,
+  Platform,
+} from 'react-native';
+import Login from './src/screens/Login';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
+import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
   useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        '691358675671-2jrmk7lk6v6tdjdmfk01t3djajuhqd80.apps.googleusercontent.com',
-    });
+    if (Platform.OS === 'android') SplashScreen.hide();
   }, []);
-
-  const onGoogleButtonPress = async () => {
-    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-    const {idToken} = await GoogleSignin.signIn();
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    return auth().signInWithCredential(googleCredential);
-  };
-
   return (
-    <SafeAreaView>
-      <Text>App</Text>
-      <Button title="Google" onPress={onGoogleButtonPress} />
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={{flex: 1}}>
+        <Login />
+      </SafeAreaView>
+    </Provider>
   );
 };
 
