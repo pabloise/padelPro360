@@ -3,7 +3,7 @@ export interface UserType {
   email: string | null;
   emailVerified: boolean;
   uid: string;
-  photoURL: string | null;
+  photoURL?: string | null;
 }
 
 export interface UserState {
@@ -11,4 +11,5 @@ export interface UserState {
   user: UserType | null;
   userEmail: string;
   userPassword: string;
+  userName?: string;
 }

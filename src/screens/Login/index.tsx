@@ -7,6 +7,7 @@ import {
   setInitializing,
   setUser,
   setUserEmail,
+  setUserName,
   setUserPassword,
 } from '../../redux/modules/userSlice';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -14,7 +15,7 @@ import {RootState} from '../../redux/store';
 import {UserType} from '../../types/user';
 
 const Login = () => {
-  const {initializing, user, userEmail, userPassword} = useSelector(
+  const {initializing, user, userEmail, userPassword, userName} = useSelector(
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch();
@@ -87,7 +88,11 @@ const Login = () => {
   };
 
   const handlePasswordChange = (password: string) => {
-    dispatch(dispatch(setUserPassword(password)));
+    dispatch(setUserPassword(password));
+  };
+
+  const handleNameChange = (name: string) => {
+    dispatch(setUserName(name));
   };
 
   const handleSignOut = () => {
@@ -104,6 +109,11 @@ const Login = () => {
         <View>
           <Text>Login with your email</Text>
           <TextInput
+            placeholder="Enter your name"
+            value={userName}
+            onChangeText={handleNameChange}
+          />
+          <TextInput
             placeholder="Enter your email"
             value={userEmail}
             onChangeText={handleEmailChange}
@@ -119,7 +129,7 @@ const Login = () => {
         </View>
       ) : (
         <View>
-          <Text>Welcome, {user.displayName || user.email}</Text>
+          <Text>Welcome, {user.displayName || userName}</Text>
           {user.photoURL && (
             <Image
               source={{uri: user.photoURL ?? undefined}}

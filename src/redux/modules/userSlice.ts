@@ -6,6 +6,7 @@ const initialState: UserState = {
   user: null,
   userEmail: '',
   userPassword: '',
+  userName: '',
 };
 
 export const userSlice = createSlice({
@@ -17,23 +18,15 @@ export const userSlice = createSlice({
     },
     setUser: (state, action: PayloadAction<UserType | null>) => {
       state.user = action.payload;
-      // if (action.payload) {
-      //   state.user = {
-      //     displayName: action.payload.displayName,
-      //     email: action.payload.email,
-      //     emailVerified: action.payload.emailVerified,
-      //     uid: action.payload.uid,
-      //     photoURL: action.payload.photoURL,
-      //   };
-      // } else {
-      //   state.user = null;
-      // }
     },
     setUserEmail: (state, action: PayloadAction<string>) => {
       state.userEmail = action.payload;
     },
     setUserPassword: (state, action: PayloadAction<string>) => {
       state.userPassword = action.payload;
+    },
+    setUserName: (state, action: PayloadAction<string>) => {
+      state.userName = action.payload;
     },
     resetUser: state => {
       state.user = null;
@@ -48,6 +41,7 @@ export const {
   setUser,
   setUserEmail,
   setUserPassword,
+  setUserName,
   resetUser,
 } = userSlice.actions;
 
