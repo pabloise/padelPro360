@@ -12,16 +12,16 @@ import Login from './src/screens/Login';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 import SplashScreen from 'react-native-splash-screen';
+import {MainNavigation} from './src/screens';
 
 const App = () => {
   useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
   }, []);
+
   return (
     <Provider store={store}>
-      <SafeAreaView style={{flex: 1}}>
-        <Login />
-      </SafeAreaView>
+      <MainNavigation />
     </Provider>
   );
 };

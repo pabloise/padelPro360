@@ -1,24 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Image, Text, TextInput, View} from 'react-native';
+import {Button, Image, SafeAreaView, Text, TextInput, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  resetUser,
-  setInitializing,
-  setUser,
-  setUserEmail,
-  setUserName,
-  setUserPassword,
-} from '../../redux/modules/userSlice';
+import {setInitializing, setUser} from '../../redux/modules/userSlice';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {RootState} from '../../redux/store';
 import {UserType} from '../../types/user';
+import useAuthForm from '../../hooks/useAuthForm';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationProps} from '../../types/navigation';
 
 const Login = () => {
-  const {initializing, user, userEmail, userPassword, userName} = useSelector(
+  const {initializing, userEmail, userPassword} = useSelector(
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch();
+  const {handleEmailChange, handlePasswordChange} = useAuthForm();
+  const navigation = useNavigation<NavigationProps>();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -55,92 +53,51 @@ const Login = () => {
       const {idToken} = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const userCredential = auth().signInWithCredential(googleCredential);
+      navigation.navigate('Home');
       return userCredential;
     } catch (error) {
       console.log('erorrroroorororor', error);
     }
   };
 
-  const RegisterWithEmail = () => {
-    auth()
-      .createUserWithEmailAndPassword(userEmail, userPassword)
-      .then(userCredential => {
-        const userData: UserType = {
-          displayName: userCredential.user.displayName,
-          email: userCredential.user.email,
-          emailVerified: userCredential.user.emailVerified,
-          uid: userCredential.user.uid,
-          photoURL: userCredential.user.uid,
-        };
-        dispatch(setUser(userData));
-        console.log('User account created and signed in!!!!', userEmail);
-        dispatch(setUserEmail(''));
-        dispatch(setUserPassword(''));
-        dispatch(setInitializing(false));
-      })
-      .catch(error => {
-        console.log('An error has ocurred!', error);
-      });
-  };
-
-  const handleEmailChange = (email: string) => {
-    dispatch(setUserEmail(email));
-  };
-
-  const handlePasswordChange = (password: string) => {
-    dispatch(setUserPassword(password));
-  };
-
-  const handleNameChange = (name: string) => {
-    dispatch(setUserName(name));
-  };
-
-  const handleSignOut = () => {
-    auth()
-      .signOut()
-      .then(() => dispatch(resetUser()));
+  const SignInWithEmail = () => {
+    try {
+      const userCredential = auth().signInWithEmailAndPassword(
+        userEmail,
+        userPassword,
+      );
+      console.log('user logged in', userCredential);
+    } catch (error) {
+      console.log('errorcito', error);
+    }
   };
 
   if (initializing) return null;
 
   return (
-    <View>
-      {!user ? (
-        <View>
-          <Text>Login with your email</Text>
-          <TextInput
-            placeholder="Enter your name"
-            value={userName}
-            onChangeText={handleNameChange}
-          />
-          <TextInput
-            placeholder="Enter your email"
-            value={userEmail}
-            onChangeText={handleEmailChange}
-          />
-          <TextInput
-            placeholder="Enter your password"
-            value={userPassword}
-            onChangeText={handlePasswordChange}
-          />
-          <Button title="Register" onPress={RegisterWithEmail} />
-          <Text>If you want, you can also use</Text>
-          <Button title="Google" onPress={onGoogleButtonPress} />
-        </View>
-      ) : (
-        <View>
-          <Text>Welcome, {user.displayName || userName}</Text>
-          {user.photoURL && (
-            <Image
-              source={{uri: user.photoURL ?? undefined}}
-              style={{width: 30, height: 30}}
-            />
-          )}
-
-          <Button title="logout" onPress={handleSignOut} />
-        </View>
-      )}
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      <View>
+        <Text>Login with your email</Text>
+        <TextInput
+          placeholder="Enter your email"
+          value={userEmail}
+          onChangeText={handleEmailChange}
+        />
+        <TextInput
+          placeholder="Enter your password"
+          value={userPassword}
+          onChangeText={handlePasswordChange}
+        />
+        <Button title="sign in" onPress={SignInWithEmail} />
+        <Text>If you want, you can also use</Text>
+        <Button title="Google" onPress={onGoogleButtonPress} />
+        <Text>Don't have an account?</Text>
+        <Button
+          title="Register now"
+          onPress={() => navigation.navigate('Register')}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

@@ -11,5 +11,5 @@ export interface UserState {
   user: UserType | null;
   userEmail: string;
   userPassword: string;
-  userName?: string;
+  userName: string;
 }
