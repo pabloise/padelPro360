@@ -8,6 +8,7 @@ export interface UserType {
 
 export interface UserState {
   initializing: boolean;
+  isLoading: boolean;
   user: UserType | null;
   userEmail: string;
   userPassword: string;

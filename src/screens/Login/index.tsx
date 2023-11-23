@@ -1,14 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Image, SafeAreaView, Text, TextInput, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {Button, SafeAreaView, Text, TextInput, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
-import {setInitializing, setUser} from '../../redux/modules/userSlice';
+import {
+  setInitializing,
+  setIsLoading,
+  setUser,
+} from '../../redux/modules/userSlice';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {RootState} from '../../redux/store';
 import {UserType} from '../../types/user';
 import useAuthForm from '../../hooks/useAuthForm';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProps} from '../../types/navigation';
+import Toast from 'react-native-toast-message';
 
 const Login = () => {
   const {initializing, userEmail, userPassword} = useSelector(
@@ -60,22 +65,31 @@ const Login = () => {
     }
   };
 
-  const SignInWithEmail = () => {
+  const SignInWithEmail = async () => {
+    dispatch(setIsLoading(true));
+    navigation.navigate('Home');
     try {
-      const userCredential = auth().signInWithEmailAndPassword(
+      const userCredential = await auth().signInWithEmailAndPassword(
         userEmail,
         userPassword,
       );
       console.log('user logged in', userCredential);
     } catch (error) {
       console.log('errorcito', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error!',
+        text2: `It seems you don't have an account. Press Register 😉`,
+      });
+    } finally {
+      dispatch(setIsLoading(false));
     }
   };
 
   if (initializing) return null;
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView>
       <View>
         <Text>Login with your email</Text>
         <TextInput

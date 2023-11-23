@@ -3,6 +3,7 @@ import {UserState, UserType} from '../../types/user';
 
 const initialState: UserState = {
   initializing: true,
+  isLoading: false,
   user: null,
   userEmail: '',
   userPassword: '',
@@ -15,6 +16,9 @@ export const userSlice = createSlice({
   reducers: {
     setInitializing: (state, action: PayloadAction<boolean>) => {
       state.initializing = action.payload;
+    },
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
     },
     setUser: (state, action: PayloadAction<UserType | null>) => {
       state.user = action.payload;
@@ -38,6 +42,7 @@ export const userSlice = createSlice({
 
 export const {
   setInitializing,
+  setIsLoading,
   setUser,
   setUserEmail,
   setUserPassword,
