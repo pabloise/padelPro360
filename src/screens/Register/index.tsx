@@ -7,6 +7,7 @@ import {
   setUserPassword,
   setUserName,
   setInitializing,
+  setIsLoading,
 } from '../../redux/modules/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, SafeAreaView, TextInput, View} from 'react-native';
@@ -14,6 +15,7 @@ import {RootState} from '../../redux/store';
 import useAuthForm from '../../hooks/useAuthForm';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProps} from '../../types/navigation';
+import Toast from 'react-native-toast-message';
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -24,35 +26,47 @@ const Register = () => {
     useAuthForm();
   const navigation = useNavigation<NavigationProps>();
 
-  const RegisterWithEmail = (
+  const RegisterWithEmail = async (
     userName: string,
     userEmail: string,
     userPassword: string,
   ) => {
-    auth()
-      .createUserWithEmailAndPassword(userEmail, userPassword)
-      .then(userCredential => {
-        userCredential.user.updateProfile({
-          displayName: userName,
+    dispatch(setIsLoading(true));
+    navigation.navigate('Home');
+    try {
+      await auth()
+        .createUserWithEmailAndPassword(userEmail, userPassword)
+        .then(userCredential => {
+          userCredential.user.updateProfile({
+            displayName: userName,
+          });
+          const userData: UserType = {
+            displayName: userName,
+            email: userCredential.user.email,
+            emailVerified: userCredential.user.emailVerified,
+            uid: userCredential.user.uid,
+            photoURL: userCredential.user.photoURL,
+          };
+          dispatch(setUser(userData));
+          console.log('User account created and signed in!!!!', userEmail);
+          dispatch(setUserEmail(''));
+          dispatch(setUserPassword(''));
+          dispatch(setUserName(''));
+          dispatch(setInitializing(false));
         });
-        const userData: UserType = {
-          displayName: userName,
-          email: userCredential.user.email,
-          emailVerified: userCredential.user.emailVerified,
-          uid: userCredential.user.uid,
-          photoURL: userCredential.user.uid,
-        };
-        dispatch(setUser(userData));
-        console.log('User account created and signed in!!!!', userEmail);
-        dispatch(setUserEmail(''));
-        dispatch(setUserPassword(''));
-        dispatch(setUserName(''));
-        dispatch(setInitializing(false));
-        navigation.navigate('Home');
-      })
-      .catch(error => {
-        console.log('An error has ocurred!', error);
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Ups! Email already in use',
+        text2: `It seems you already have an account. Try signing in 😉`,
       });
+      dispatch(setUserEmail(''));
+      dispatch(setUserPassword(''));
+      dispatch(setUserName(''));
+      navigation.navigate('Login');
+    } finally {
+      dispatch(setIsLoading(false));
+    }
   };
 
   return (

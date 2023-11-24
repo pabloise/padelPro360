@@ -8,21 +8,22 @@ const Home = () => {
   const {handleSignOut} = useLogout();
   const {user, isLoading} = useSelector((state: RootState) => state.user);
 
-  console.log('isLoading en Home', isLoading);
-
   if (isLoading) {
     return (
       <SafeAreaView>
         <SkeletonPlaceholder borderRadius={4}>
-          <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
+          <SkeletonPlaceholder.Item
+            flexDirection="row"
+            alignItems="center"
+            paddingLeft={10}>
             <SkeletonPlaceholder.Item
               width={60}
               height={60}
               borderRadius={50}
             />
             <SkeletonPlaceholder.Item marginLeft={20}>
-              <SkeletonPlaceholder.Item width={120} height={20} />
-              <SkeletonPlaceholder.Item marginTop={6} width={80} height={20} />
+              <SkeletonPlaceholder.Item width={250} height={20} />
+              <SkeletonPlaceholder.Item marginTop={6} width={180} height={20} />
             </SkeletonPlaceholder.Item>
           </SkeletonPlaceholder.Item>
         </SkeletonPlaceholder>
@@ -32,16 +33,18 @@ const Home = () => {
 
   return (
     <SafeAreaView>
-      <View>
-        <Text>Hi from Home</Text>
-        <Text>Welcome, {user?.displayName}</Text>
+      <View style={{flexDirection: 'row'}}>
         <Image
-          alt="hola"
-          source={{uri: user?.photoURL || undefined}}
-          style={{width: 100, height: 100}}
+          style={{width: 60, height: 60, borderRadius: 50}}
+          source={
+            user?.photoURL
+              ? {uri: user.photoURL}
+              : require('../../assets/avatar.png')
+          }
         />
-        <Button title="Logout" onPress={handleSignOut} />
+        <Text>Welcome, {user?.displayName}</Text>
       </View>
+      <Button title="Logout" onPress={handleSignOut} />
     </SafeAreaView>
   );
 };

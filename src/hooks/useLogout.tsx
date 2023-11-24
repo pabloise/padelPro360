@@ -12,8 +12,8 @@ const useLogout = () => {
     auth()
       .signOut()
       .then(() => {
-        dispatch(resetUser());
         navigation.navigate('Login');
+        dispatch(resetUser());
       });
   };
   return {handleSignOut};

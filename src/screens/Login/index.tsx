@@ -6,6 +6,8 @@ import {
   setInitializing,
   setIsLoading,
   setUser,
+  setUserEmail,
+  setUserPassword,
 } from '../../redux/modules/userSlice';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {RootState} from '../../redux/store';
@@ -16,7 +18,7 @@ import {NavigationProps} from '../../types/navigation';
 import Toast from 'react-native-toast-message';
 
 const Login = () => {
-  const {initializing, userEmail, userPassword} = useSelector(
+  const {initializing, userEmail, userPassword, user} = useSelector(
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch();
@@ -33,6 +35,7 @@ const Login = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(user => {
       if (user) {
+        navigation.navigate('Home');
         const userData: UserType = {
           displayName: user.displayName,
           email: user.email,
@@ -53,15 +56,20 @@ const Login = () => {
   }, [dispatch, initializing]);
 
   const onGoogleButtonPress = async () => {
+    dispatch(setIsLoading(true));
+    navigation.navigate('Home');
     try {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       const {idToken} = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      const userCredential = auth().signInWithCredential(googleCredential);
-      navigation.navigate('Home');
+      const userCredential = await auth().signInWithCredential(
+        googleCredential,
+      );
       return userCredential;
     } catch (error) {
-      console.log('erorrroroorororor', error);
+      console.log('error', error);
+    } finally {
+      dispatch(setIsLoading(false));
     }
   };
 
@@ -78,9 +86,12 @@ const Login = () => {
       console.log('errorcito', error);
       Toast.show({
         type: 'error',
-        text1: 'Error!',
-        text2: `It seems you don't have an account. Press Register 😉`,
+        text1: 'Something is wrong',
+        text2: `Your email or password is incorrect. Try again! 😉`,
       });
+      dispatch(setUserEmail(''));
+      dispatch(setUserPassword(''));
+      navigation.navigate('Login');
     } finally {
       dispatch(setIsLoading(false));
     }
