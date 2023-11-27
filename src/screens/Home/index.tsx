@@ -6,7 +6,9 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 const Home = () => {
   const {handleSignOut} = useLogout();
-  const {user, isLoading} = useSelector((state: RootState) => state.user);
+  const {user, isLoading, userGender} = useSelector(
+    (state: RootState) => state.user,
+  );
 
   if (isLoading) {
     return (
@@ -31,18 +33,36 @@ const Home = () => {
     );
   }
 
+  const avatarImages = {
+    Male: require('../../assets/male-avatar.png'),
+    Female: require('../../assets/female-avatar.png'),
+    "I'd rather not say": require('../../assets/avatar.png'),
+  };
+
+  const avatarImageCheck = () => {
+    const genderKey = userGender ?? "I'd rather not say";
+    const imgSrc = avatarImages[genderKey];
+    return (
+      <Image
+        source={imgSrc}
+        style={{width: 60, height: 60, borderRadius: 50}}
+      />
+    );
+  };
+
   return (
     <SafeAreaView>
       <View style={{flexDirection: 'row'}}>
-        <Image
-          style={{width: 60, height: 60, borderRadius: 50}}
-          source={
-            user?.photoURL
-              ? {uri: user.photoURL}
-              : require('../../assets/avatar.png')
-          }
-        />
+        {user?.photoURL ? (
+          <Image
+            style={{width: 60, height: 60, borderRadius: 50}}
+            source={{uri: user?.photoURL}}
+          />
+        ) : (
+          avatarImageCheck()
+        )}
         <Text>Welcome, {user?.displayName}</Text>
+        <Text>{userGender}</Text>
       </View>
       <Button title="Logout" onPress={handleSignOut} />
     </SafeAreaView>

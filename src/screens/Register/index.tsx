@@ -1,6 +1,6 @@
 import React from 'react';
 import auth from '@react-native-firebase/auth';
-import {UserType} from '../../types/user';
+import {GenderType, UserType} from '../../types/user';
 import {
   setUser,
   setUserEmail,
@@ -8,18 +8,20 @@ import {
   setUserName,
   setInitializing,
   setIsLoading,
+  setGender,
 } from '../../redux/modules/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, SafeAreaView, TextInput, View} from 'react-native';
+import {Button, SafeAreaView, TextInput} from 'react-native';
 import {RootState} from '../../redux/store';
 import useAuthForm from '../../hooks/useAuthForm';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProps} from '../../types/navigation';
 import Toast from 'react-native-toast-message';
+import {Picker} from '@react-native-picker/picker';
 
 const Register = () => {
   const dispatch = useDispatch();
-  const {userName, userEmail, userPassword} = useSelector(
+  const {userName, userEmail, userPassword, userGender} = useSelector(
     (state: RootState) => state.user,
   );
   const {handleEmailChange, handlePasswordChange, handleNameChange} =
@@ -69,6 +71,18 @@ const Register = () => {
     }
   };
 
+  const pickerOptions = [
+    {label: 'Male', value: 'Male'},
+    {label: 'Female', value: 'Female'},
+    {label: `I'd rather not say`, value: `I'd rather not say`},
+  ];
+
+  const handleGenderChange = (value: GenderType) => {
+    dispatch(setGender(value));
+  };
+
+  const isGenderSelected = userGender !== null;
+
   return (
     <SafeAreaView>
       <TextInput
@@ -86,6 +100,14 @@ const Register = () => {
         value={userPassword}
         onChangeText={handlePasswordChange}
       />
+      <Picker
+        enabled={!isGenderSelected}
+        selectedValue={userGender}
+        onValueChange={itemValue => handleGenderChange(itemValue)}>
+        {pickerOptions.map(item => (
+          <Picker.Item key={item.value} label={item.label} value={item.value} />
+        ))}
+      </Picker>
       <Button
         title="Register!"
         onPress={() => {

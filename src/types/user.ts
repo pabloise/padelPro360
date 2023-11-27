@@ -1,3 +1,5 @@
+export type GenderType = 'Male' | 'Female' | `I'd rather not say` | null;
+
 export interface UserType {
   displayName: string | null;
   email: string | null;
@@ -13,4 +15,5 @@ export interface UserState {
   userEmail: string;
   userPassword: string;
   userName: string;
+  userGender: GenderType;
 }

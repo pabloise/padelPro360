@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {UserState, UserType} from '../../types/user';
+import {GenderType, UserState, UserType} from '../../types/user';
 
 const initialState: UserState = {
   initializing: true,
@@ -8,6 +8,7 @@ const initialState: UserState = {
   userEmail: '',
   userPassword: '',
   userName: '',
+  userGender: null,
 };
 
 export const userSlice = createSlice({
@@ -32,6 +33,9 @@ export const userSlice = createSlice({
     setUserName: (state, action: PayloadAction<string>) => {
       state.userName = action.payload;
     },
+    setGender: (state, action: PayloadAction<GenderType>) => {
+      state.userGender = action.payload;
+    },
     resetUser: state => {
       state.user = null;
       state.userEmail = '';
@@ -47,6 +51,7 @@ export const {
   setUserEmail,
   setUserPassword,
   setUserName,
+  setGender,
   resetUser,
 } = userSlice.actions;
 
