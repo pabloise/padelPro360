@@ -16,6 +16,8 @@ import useAuthForm from '../../hooks/useAuthForm';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationProps} from '../../types/navigation';
 import Toast from 'react-native-toast-message';
+import BookingsItem from '../../components/BookingsItem';
+import Config from 'react-native-config';
 
 const Login = () => {
   const {initializing, userEmail, userPassword, user} = useSelector(
@@ -27,8 +29,7 @@ const Login = () => {
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId:
-        '691358675671-2jrmk7lk6v6tdjdmfk01t3djajuhqd80.apps.googleusercontent.com',
+      webClientId: Config.GOOGLE_WEB_CLIENT_ID,
     });
   }, []);
 
@@ -67,7 +68,7 @@ const Login = () => {
       );
       return userCredential;
     } catch (error) {
-      console.log('error', error);
+      console.log('Google error', error);
     } finally {
       dispatch(setIsLoading(false));
     }
@@ -83,7 +84,7 @@ const Login = () => {
       );
       console.log('user logged in', userCredential);
     } catch (error) {
-      console.log('errorcito', error);
+      console.log('SignInWithEmail Error: ', error);
       Toast.show({
         type: 'error',
         text1: 'Something is wrong',
@@ -122,6 +123,7 @@ const Login = () => {
           onPress={() => navigation.navigate('Register')}
         />
       </View>
+      <BookingsItem />
     </SafeAreaView>
   );
 };

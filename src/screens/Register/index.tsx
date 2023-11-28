@@ -50,7 +50,7 @@ const Register = () => {
             photoURL: userCredential.user.photoURL,
           };
           dispatch(setUser(userData));
-          console.log('User account created and signed in!!!!', userEmail);
+          console.log('User account created and signed in!', userEmail);
           dispatch(setUserEmail(''));
           dispatch(setUserPassword(''));
           dispatch(setUserName(''));
