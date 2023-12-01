@@ -3,10 +3,11 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import useLogout from '../../hooks/useLogout';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import OwnerHome from '../OwnerHome';
 
 const Home = () => {
   const {handleSignOut} = useLogout();
-  const {user, isLoading, userGender} = useSelector(
+  const {user, isLoading, userGender, userType} = useSelector(
     (state: RootState) => state.user,
   );
 
@@ -37,6 +38,7 @@ const Home = () => {
     Male: require('../../assets/male-avatar.png'),
     Female: require('../../assets/female-avatar.png'),
     "I'd rather not say": require('../../assets/avatar.png'),
+    'Non binary': require('../../assets/avatar.png'),
   };
 
   const avatarImageCheck = () => {
@@ -52,19 +54,28 @@ const Home = () => {
 
   return (
     <SafeAreaView>
-      <View style={{flexDirection: 'row'}}>
-        {user?.photoURL ? (
-          <Image
-            style={{width: 60, height: 60, borderRadius: 50}}
-            source={{uri: user?.photoURL}}
-          />
-        ) : (
-          avatarImageCheck()
-        )}
-        <Text>Welcome, {user?.displayName}</Text>
-        <Text>{userGender}</Text>
-      </View>
-      <Button title="Logout" onPress={handleSignOut} />
+      {userType === 'owner' ? (
+        <View>
+          <OwnerHome />
+          <Button title="Logout" onPress={handleSignOut} />
+        </View>
+      ) : (
+        <View>
+          <View style={{flexDirection: 'row'}}>
+            {user?.photoURL ? (
+              <Image
+                style={{width: 60, height: 60, borderRadius: 50}}
+                source={{uri: user?.photoURL}}
+              />
+            ) : (
+              avatarImageCheck()
+            )}
+            <Text>Welcome, {user?.displayName}</Text>
+            <Text>{userGender}</Text>
+          </View>
+          <Button title="Logout" onPress={handleSignOut} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

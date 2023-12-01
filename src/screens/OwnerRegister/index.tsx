@@ -1,38 +1,35 @@
-import React from 'react';
-import {GenderType} from '../../types/user';
-import {setGender} from '../../redux/modules/userSlice';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, SafeAreaView, TextInput} from 'react-native';
+import {NavigationProps} from '../../types/navigation';
 import {RootState} from '../../redux/store';
 import useAuthForm from '../../hooks/useAuthForm';
-import {useNavigation} from '@react-navigation/native';
-import {NavigationProps} from '../../types/navigation';
-import Toast from 'react-native-toast-message';
-import {Picker} from '@react-native-picker/picker';
 import {RegisterWithEmail} from '../../helpers/authHelper';
+import Toast from 'react-native-toast-message';
+import {Button, SafeAreaView, TextInput} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import {GENDER_OPTIONS} from '../../constants/genderOptions';
 
-const Register = () => {
+const OwnerRegister = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps>();
-  const {userName, userEmail, userPassword, userGender} = useSelector(
+  const {userEmail, userPassword, userName, userGender, userType} = useSelector(
     (state: RootState) => state.user,
   );
   const {
     handleEmailChange,
-    handlePasswordChange,
     handleNameChange,
+    handlePasswordChange,
     handleGenderChange,
   } = useAuthForm();
 
-  const handleRegister = () => {
+  const handleOwnerRegister = () => {
     RegisterWithEmail(
       dispatch,
       navigation,
       userEmail,
       userPassword,
       userName,
-      'normal',
+      'owner',
     )
       .then(() => {
         Toast.show({
@@ -74,11 +71,7 @@ const Register = () => {
           <Picker.Item key={item.value} label={item.label} value={item.value} />
         ))}
       </Picker>
-      <Button title="Register!" onPress={handleRegister} />
-      <Button
-        title="Register as an owner"
-        onPress={() => navigation.navigate('OwnerRegister')}
-      />
+      <Button title="Register!" onPress={handleOwnerRegister} />
       <Button
         title="Take me home"
         onPress={() => navigation.navigate('Login')}
@@ -87,4 +80,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default OwnerRegister;

@@ -9,6 +9,7 @@ const initialState: UserState = {
   userPassword: '',
   userName: '',
   userGender: null,
+  userType: 'normal',
 };
 
 export const userSlice = createSlice({
@@ -36,6 +37,9 @@ export const userSlice = createSlice({
     setGender: (state, action: PayloadAction<GenderType>) => {
       state.userGender = action.payload;
     },
+    setUserType: (state, action: PayloadAction<'normal' | 'owner'>) => {
+      state.userType = action.payload;
+    },
     resetUser: state => {
       state.user = null;
       state.userEmail = '';
@@ -53,6 +57,7 @@ export const {
   setUserName,
   setGender,
   resetUser,
+  setUserType,
 } = userSlice.actions;
 
 export default userSlice.reducer;

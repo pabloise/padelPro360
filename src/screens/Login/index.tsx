@@ -25,7 +25,7 @@ const Login = () => {
   );
   const dispatch = useDispatch();
   const {handleEmailChange, handlePasswordChange} = useAuthForm();
-  const navigation = useNavigation<NavigationProps>();
+  const {navigate} = useNavigation<NavigationProps>();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -36,7 +36,7 @@ const Login = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(user => {
       if (user) {
-        navigation.navigate('Home');
+        navigate('Home');
         const userData: UserType = {
           displayName: user.displayName,
           email: user.email,
@@ -58,7 +58,7 @@ const Login = () => {
 
   const onGoogleButtonPress = async () => {
     dispatch(setIsLoading(true));
-    navigation.navigate('Home');
+    navigate('Home');
     try {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       const {idToken} = await GoogleSignin.signIn();
@@ -76,7 +76,7 @@ const Login = () => {
 
   const SignInWithEmail = async () => {
     dispatch(setIsLoading(true));
-    navigation.navigate('Home');
+    navigate('Home');
     try {
       const userCredential = await auth().signInWithEmailAndPassword(
         userEmail,
@@ -92,7 +92,7 @@ const Login = () => {
       });
       dispatch(setUserEmail(''));
       dispatch(setUserPassword(''));
-      navigation.navigate('Login');
+      navigate('Login');
     } finally {
       dispatch(setIsLoading(false));
     }
@@ -118,10 +118,7 @@ const Login = () => {
         <Text>If you want, you can also use</Text>
         <Button title="Google" onPress={onGoogleButtonPress} />
         <Text>Don't have an account?</Text>
-        <Button
-          title="Register now"
-          onPress={() => navigation.navigate('Register')}
-        />
+        <Button title="Register now" onPress={() => navigate('Register')} />
       </View>
       <BookingsItem />
     </SafeAreaView>

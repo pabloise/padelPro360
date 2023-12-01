@@ -6,13 +6,13 @@ import {NavigationProps} from '../types/navigation';
 
 const useLogout = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation<NavigationProps>();
+  const {navigate} = useNavigation<NavigationProps>();
 
   const handleSignOut = () => {
     auth()
       .signOut()
       .then(() => {
-        navigation.navigate('Login');
+        navigate('Login');
         dispatch(resetUser());
       });
   };

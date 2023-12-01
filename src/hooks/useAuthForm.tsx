@@ -3,10 +3,16 @@ import {
   setUserEmail,
   setUserName,
   setUserPassword,
+  setGender,
 } from '../redux/modules/userSlice';
+import {GenderType} from '../types/user';
 
 const useAuthForm = () => {
   const dispatch = useDispatch();
+
+  const handleGenderChange = (value: GenderType) => {
+    dispatch(setGender(value));
+  };
 
   const handleEmailChange = (email: string) => {
     dispatch(setUserEmail(email));
@@ -20,7 +26,12 @@ const useAuthForm = () => {
     dispatch(setUserName(name));
   };
 
-  return {handleEmailChange, handlePasswordChange, handleNameChange};
+  return {
+    handleEmailChange,
+    handlePasswordChange,
+    handleNameChange,
+    handleGenderChange,
+  };
 };
 
 export default useAuthForm;
