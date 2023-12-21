@@ -8,7 +8,18 @@ export interface UserState {
   userGender: GenderType;
   isOwner?: boolean;
   userType: 'normal' | 'owner';
+  clubName: string;
+  clubAddress: string;
+  clubGoogleMapsLink: string;
+  status: 'pending' | 'approved' | 'rejected';
+  courts: Court[];
+  location: Location | null;
 }
+
+export type Location = {
+  lat: number;
+  lng: number;
+} | null;
 
 export interface UserType {
   displayName: string | null;
@@ -28,4 +39,10 @@ export type GenderType =
 export interface GenderOption {
   label: string;
   value: GenderType;
+}
+
+export interface Court {
+  courtId: string;
+  courtName: string;
+  availability: string;
 }

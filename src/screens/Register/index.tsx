@@ -1,6 +1,4 @@
 import React from 'react';
-import {GenderType} from '../../types/user';
-import {setGender} from '../../redux/modules/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, SafeAreaView, TextInput} from 'react-native';
 import {RootState} from '../../redux/store';

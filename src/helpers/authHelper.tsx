@@ -1,5 +1,8 @@
 import auth from '@react-native-firebase/auth';
 import {
+  setClubAddress,
+  setClubGoogleMapsLink,
+  setClubName,
   setInitializing,
   setIsLoading,
   setUser,
@@ -41,9 +44,9 @@ export const RegisterWithEmail = async (
         };
         dispatch(setUserType(userType));
         dispatch(setUser(userData));
-        dispatch(setUserEmail(''));
         dispatch(setUserPassword(''));
         dispatch(setUserName(''));
+        dispatch(setClubGoogleMapsLink(''));
         dispatch(setInitializing(false));
       });
   } catch (error) {

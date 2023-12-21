@@ -4,6 +4,7 @@ import {RootState} from '../../redux/store';
 import useLogout from '../../hooks/useLogout';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import OwnerHome from '../OwnerHome';
+import {AVATAR_IMAGES} from '../../constants/genderOptions';
 
 const Home = () => {
   const {handleSignOut} = useLogout();
@@ -34,16 +35,9 @@ const Home = () => {
     );
   }
 
-  const avatarImages = {
-    Male: require('../../assets/male-avatar.png'),
-    Female: require('../../assets/female-avatar.png'),
-    "I'd rather not say": require('../../assets/avatar.png'),
-    'Non binary': require('../../assets/avatar.png'),
-  };
-
   const avatarImageCheck = () => {
     const genderKey = userGender ?? "I'd rather not say";
-    const imgSrc = avatarImages[genderKey];
+    const imgSrc = AVATAR_IMAGES[genderKey];
     return (
       <Image
         source={imgSrc}

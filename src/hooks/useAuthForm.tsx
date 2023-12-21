@@ -4,6 +4,9 @@ import {
   setUserName,
   setUserPassword,
   setGender,
+  setClubName,
+  setClubAddress,
+  setClubGoogleMapsLink,
 } from '../redux/modules/userSlice';
 import {GenderType} from '../types/user';
 
@@ -26,11 +29,26 @@ const useAuthForm = () => {
     dispatch(setUserName(name));
   };
 
+  const handleClubNameChange = (clubName: string) => {
+    dispatch(setClubName(clubName));
+  };
+
+  const handleClubAddressChange = (clubAddress: string) => {
+    dispatch(setClubAddress(clubAddress));
+  };
+
+  const handleClubGoogleMapsLinkChange = (clubGoogleMapsLink: string) => {
+    dispatch(setClubGoogleMapsLink(clubGoogleMapsLink));
+  };
+
   return {
     handleEmailChange,
     handlePasswordChange,
     handleNameChange,
     handleGenderChange,
+    handleClubNameChange,
+    handleClubAddressChange,
+    handleClubGoogleMapsLinkChange,
   };
 };
 
