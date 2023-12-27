@@ -6,17 +6,24 @@ import {RootState} from '../../redux/store';
 import useAuthForm from '../../hooks/useAuthForm';
 import {RegisterWithEmail} from '../../helpers/authHelper';
 import Toast from 'react-native-toast-message';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import {setClubAddress, setLocation} from '../../redux/modules/userSlice';
-import GoogleMap from '../../components/GoogleMap';
-import {useEffect} from 'react';
+import {
+  GooglePlacesAutocomplete,
+  GooglePlacesAutocompleteRef,
+} from 'react-native-google-places-autocomplete';
+import {setClubAddress, setLocation} from '../../redux/modules/clubSlice';
+import {useEffect, useRef, useState} from 'react';
 
 const OwnerRegister = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps>();
-  const {userEmail, userPassword, userName, userGender, clubName} = useSelector(
+  const {userEmail, userPassword, userName} = useSelector(
     (state: RootState) => state.user,
   );
+
+  const [address, setAddress] = useState('');
+  const {clubName} = useSelector((state: RootState) => state.club.currentClub);
+  const placesRef = useRef<GooglePlacesAutocompleteRef>(null);
+
   const {
     handleEmailChange,
     handleNameChange,
@@ -24,26 +31,24 @@ const OwnerRegister = () => {
     handleClubNameChange,
   } = useAuthForm();
 
-  const handleOwnerRegister = () => {
-    RegisterWithEmail(
-      dispatch,
-      navigation,
-      userEmail,
-      userPassword,
-      userName,
-      'owner',
-    )
-      .then(() => {
-        Toast.show({
-          type: 'success',
-          text1: 'Success! ✅',
-          text2: 'You have been registered',
-        });
-      })
-      .catch(error => {
-        console.log('new error, ');
-        console.error(error);
-      });
+  const handleOwnerRegister = async () => {
+    try {
+      await RegisterWithEmail(
+        dispatch,
+        navigation,
+        userEmail,
+        userPassword,
+        userName,
+        'owner',
+        () => {
+          if (placesRef.current) {
+            placesRef.current.setAddressText('');
+          }
+        },
+      );
+    } catch (error) {
+      console.log('error desde ownerRegister', error);
+    }
   };
 
   return (
@@ -77,6 +82,11 @@ const OwnerRegister = () => {
           zIndex: 10,
         }}>
         <GooglePlacesAutocomplete
+          textInputProps={{
+            value: address,
+            onChangeText: text => setAddress(text),
+          }}
+          ref={placesRef}
           placeholder="Type the club address"
           query={{
             key: 'AIzaSyC_tt9tAg7wHDoU8Zmno2PSeXfP5h6Rzfo',

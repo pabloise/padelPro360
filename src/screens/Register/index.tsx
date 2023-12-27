@@ -31,18 +31,10 @@ const Register = () => {
       userPassword,
       userName,
       'normal',
-    )
-      .then(() => {
-        Toast.show({
-          type: 'success',
-          text1: 'Success! ✅',
-          text2: 'You have been registered',
-        });
-      })
-      .catch(error => {
-        console.log('new error, ');
-        console.error(error);
-      });
+    ).catch(error => {
+      console.log('new error, ');
+      console.error(error);
+    });
   };
 
   const isGenderSelected = userGender !== null;

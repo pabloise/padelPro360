@@ -51,7 +51,6 @@ const Home = () => {
       {userType === 'owner' ? (
         <View>
           <OwnerHome />
-          <Button title="Logout" onPress={handleSignOut} />
         </View>
       ) : (
         <View>

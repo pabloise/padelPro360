@@ -4,10 +4,13 @@ import {
   setUserName,
   setUserPassword,
   setGender,
-  setClubName,
+} from '../redux/modules/userSlice';
+import {
   setClubAddress,
   setClubGoogleMapsLink,
-} from '../redux/modules/userSlice';
+  setClubName,
+} from '../redux/modules/clubSlice';
+
 import {GenderType} from '../types/user';
 
 const useAuthForm = () => {

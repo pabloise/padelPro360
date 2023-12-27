@@ -1,9 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
 import userReducer from './modules/userSlice';
+import clubReducer from './modules/clubSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    club: clubReducer,
   },
 });
 
