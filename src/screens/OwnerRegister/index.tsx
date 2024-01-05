@@ -12,6 +12,7 @@ import {
 } from 'react-native-google-places-autocomplete';
 import {setClubAddress, setLocation} from '../../redux/modules/clubSlice';
 import {useEffect, useRef, useState} from 'react';
+import {saveClubDateToFirestore} from '../../firebase/saveClubData';
 
 const OwnerRegister = () => {
   const dispatch = useDispatch();
@@ -21,7 +22,9 @@ const OwnerRegister = () => {
   );
 
   const [address, setAddress] = useState('');
-  const {clubName} = useSelector((state: RootState) => state.club.currentClub);
+  const {clubName, location} = useSelector(
+    (state: RootState) => state.club.currentClub,
+  );
   const placesRef = useRef<GooglePlacesAutocompleteRef>(null);
 
   const {
@@ -31,9 +34,14 @@ const OwnerRegister = () => {
     handleClubNameChange,
   } = useAuthForm();
 
+  const generateGoogleMapsLink = (address: string) => {
+    const encodedAddress = encodeURIComponent(address);
+    return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+  };
+
   const handleOwnerRegister = async () => {
     try {
-      await RegisterWithEmail(
+      const registeredOwner = await RegisterWithEmail(
         dispatch,
         navigation,
         userEmail,
@@ -46,6 +54,21 @@ const OwnerRegister = () => {
           }
         },
       );
+
+      const googleMapsLink = generateGoogleMapsLink(address);
+
+      if (registeredOwner) {
+        const clubData = {
+          address,
+          clubName,
+          location: location,
+          googleMapsLink,
+          ownerName: userName,
+          courts: [],
+        };
+
+        await saveClubDateToFirestore(registeredOwner.uid, clubData);
+      }
     } catch (error) {
       console.log('error desde ownerRegister', error);
     }

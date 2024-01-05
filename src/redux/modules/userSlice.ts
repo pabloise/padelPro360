@@ -10,12 +10,6 @@ const initialState: UserState = {
   userName: '',
   userGender: null,
   userType: 'normal',
-  // clubName: '',
-  // clubAddress: '',
-  // clubGoogleMapsLink: '',
-  // location: null,
-  // status: 'pending',
-  // courts: [],
 };
 
 export const userSlice = createSlice({

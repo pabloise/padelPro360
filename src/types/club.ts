@@ -5,6 +5,7 @@ export interface Club {
   googleMapsLink: string;
   location: Location | null;
   courts: Court[];
+  ownerName: string;
 }
 
 export interface ClubState {

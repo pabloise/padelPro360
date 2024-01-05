@@ -18,6 +18,8 @@ import {NavigationProps} from '../../types/navigation';
 import Toast from 'react-native-toast-message';
 import BookingsItem from '../../components/BookingsItem';
 import Config from 'react-native-config';
+import firestore from '@react-native-firebase/firestore';
+import {setCurrentClub} from '../../redux/modules/clubSlice';
 
 const Login = () => {
   const {initializing, userEmail, userPassword, user} = useSelector(
@@ -74,6 +76,24 @@ const Login = () => {
     }
   };
 
+  const fetchClubData = async (userId: string) => {
+    const clubDoc = await firestore().collection('clubs').doc(userId).get();
+    if (clubDoc.exists) {
+      const clubData = clubDoc.data();
+      const formattedClubData = {
+        id: clubDoc.id,
+        clubName: clubData?.clubName,
+        address: clubData?.address,
+        googleMapsLink: clubData?.googleMapsLink,
+        location: clubData?.location,
+        courts: clubData?.courts || [],
+        ownerName: clubData?.ownerName,
+      };
+      return formattedClubData;
+    }
+    return null;
+  };
+
   const SignInWithEmail = async () => {
     dispatch(setIsLoading(true));
     navigate('Home');
@@ -83,6 +103,10 @@ const Login = () => {
         userPassword,
       );
       console.log('user logged in', userCredential);
+      const clubData = await fetchClubData(userCredential.user.uid);
+      if (clubData) {
+        dispatch(setCurrentClub(clubData));
+      }
     } catch (error) {
       console.log('SignInWithEmail Error: ', error);
       Toast.show({
