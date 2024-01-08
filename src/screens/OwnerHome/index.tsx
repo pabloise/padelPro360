@@ -6,18 +6,16 @@ import useLogout from '../../hooks/useLogout';
 
 const OwnerHome = () => {
   const {handleSignOut} = useLogout();
-  const {userName} = useSelector((state: RootState) => state.user);
   const {user} = useSelector((state: RootState) => state);
   const {clubName, address} = useSelector(
     (state: RootState) => state.club.currentClub,
   );
+  const {ownerName} = useSelector((state: RootState) => state.club.currentClub);
 
   useEffect(() => {
     console.log('clubName: ', clubName);
     console.log('clubAddress: ', address);
   }, [clubName, address]);
-
-  console.log('user', user.userName);
 
   return (
     <SafeAreaView>
@@ -27,7 +25,7 @@ const OwnerHome = () => {
             style={{width: 60, height: 60, borderRadius: 50}}
             source={require('../../assets/owner-avatar.png')}
           />
-          <Text>Welcome, {userName}</Text>
+          <Text>Welcome, {ownerName ? ownerName : user.userName}</Text>
           <Text>Club name: {clubName}</Text>
           <Text>Club Address: {address}</Text>
         </View>

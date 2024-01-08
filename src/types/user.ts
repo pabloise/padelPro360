@@ -8,12 +8,6 @@ export interface UserState {
   userGender: GenderType;
   isOwner?: boolean;
   userType: 'normal' | 'owner';
-  // clubName: string;
-  // clubAddress: string;
-  // clubGoogleMapsLink: string;
-  // status: 'pending' | 'approved' | 'rejected';
-  // courts: Court[];
-  // location: Location | null;
 }
 
 export interface UserType {

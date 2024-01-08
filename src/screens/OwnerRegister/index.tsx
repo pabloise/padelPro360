@@ -22,14 +22,16 @@ import {saveClubDateToFirestore} from '../../firebase/saveClubData';
 import Geolocation from 'react-native-geolocation-service';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
+const GOOGLE_API_KEY = 'AIzaSyC_tt9tAg7wHDoU8Zmno2PSeXfP5h6Rzfo';
+
 const OwnerRegister = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps>();
   const {userEmail, userPassword, userName} = useSelector(
     (state: RootState) => state.user,
   );
-  const [address, setAddress] = useState('');
-  const {clubName, location} = useSelector(
+  const [inputAddress, setInputAddress] = useState('');
+  const {clubName, location, address} = useSelector(
     (state: RootState) => state.club.currentClub,
   );
   const placesRef = useRef<GooglePlacesAutocompleteRef>(null);
@@ -40,6 +42,13 @@ const OwnerRegister = () => {
     handlePasswordChange,
     handleClubNameChange,
   } = useAuthForm();
+
+  useEffect(() => {
+    setInputAddress(address);
+    if (placesRef.current) {
+      placesRef.current.setAddressText(address);
+    }
+  }, [address]);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -57,6 +66,14 @@ const OwnerRegister = () => {
     return false;
   };
 
+  const getAddressFromCoordinates = async (lat: number, lng: number) => {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_API_KEY}`,
+    );
+    const data = await response.json();
+    return data.results[0]?.formatted_address;
+  };
+
   const handleUserCurrentLocation = async () => {
     const hasPermission = await requestLocationPermission();
 
@@ -66,9 +83,11 @@ const OwnerRegister = () => {
     }
 
     Geolocation.getCurrentPosition(
-      position => {
+      async position => {
         const {latitude, longitude} = position.coords;
-        console.log('position', position);
+        const address = await getAddressFromCoordinates(latitude, longitude);
+        dispatch(setClubAddress(address));
+        console.log('This is the address', address);
       },
       error => {
         console.log('error Geolotacion, ', error);
@@ -149,13 +168,16 @@ const OwnerRegister = () => {
         }}>
         <GooglePlacesAutocomplete
           textInputProps={{
-            value: address,
-            onChangeText: text => setAddress(text),
+            value: inputAddress,
+            onChangeText: text => {
+              setInputAddress(text);
+              dispatch(setClubAddress(text));
+            },
           }}
           ref={placesRef}
           placeholder="Type the club address"
           query={{
-            key: 'AIzaSyC_tt9tAg7wHDoU8Zmno2PSeXfP5h6Rzfo',
+            key: GOOGLE_API_KEY,
             language: 'en',
             fields: 'geometry',
           }}

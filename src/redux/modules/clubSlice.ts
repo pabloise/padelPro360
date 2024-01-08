@@ -9,6 +9,7 @@ const initialState: ClubState = {
     googleMapsLink: '',
     location: null,
     courts: [],
+    ownerName: '',
   },
   clubs: {},
 };
@@ -50,6 +51,7 @@ export const clubSlice = createSlice({
         googleMapsLink: '',
         location: null,
         courts: [],
+        ownerName: '',
       };
     },
   },
