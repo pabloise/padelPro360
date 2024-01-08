@@ -5759,6 +5759,11 @@ react-native-config@^1.5.1:
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-1.5.1.tgz#73c94f511493e9b7ff9350cdf351d203a1b05acc"
   integrity sha512-g1xNgt1tV95FCX+iWz6YJonxXkQX0GdD3fB8xQtR1GUBEqweB9zMROW77gi2TygmYmUkBI7LU4pES+zcTyK4HA==
 
+react-native-geolocation-service@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-geolocation-service/-/react-native-geolocation-service-5.3.1.tgz#4ce1017789da6fdfcf7576eb6f59435622af4289"
+  integrity sha512-LTXPtPNmrdhx+yeWG47sAaCgQc3nG1z+HLLHlhK/5YfOgfLcAb9HAkhREPjQKPZOUx8pKZMIpdGFUGfJYtimXQ==
+
 react-native-gesture-handler@^2.14.0:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.14.0.tgz#d6aec0d8b2e55c67557fd6107e828c0a1a248be8"
@@ -5790,6 +5795,11 @@ react-native-maps@^1.8.3:
   integrity sha512-ilkknT9Rvy0Cz6RTdtowGUB5XI/hFNU/QsUv1KRUE7m7vKxEIaKvhVpDxZ2yee7uyXACn/uoSYggakZ//8VSiQ==
   dependencies:
     "@types/geojson" "^7946.0.10"
+
+react-native-permissions@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-4.0.3.tgz#f00f5fec276af61e29c66060d36a5cfa17c00c18"
+  integrity sha512-p3uZlu7TirbQYY6NCU67mxq6mkv/mf9aTJT8BmIe8re5KFypqAGX1oTsKi2hrmBPO/E2GxNS8Ymj9TAEqnkqsA==
 
 react-native-reanimated@^3.5.4:
   version "3.5.4"

@@ -1,18 +1,26 @@
-import {Button, SafeAreaView, TextInput, View} from 'react-native';
+import {useEffect, useRef, useState} from 'react';
+import {
+  Button,
+  PermissionsAndroid,
+  Platform,
+  SafeAreaView,
+  TextInput,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {NavigationProps} from '../../types/navigation';
 import {RootState} from '../../redux/store';
 import useAuthForm from '../../hooks/useAuthForm';
 import {RegisterWithEmail} from '../../helpers/authHelper';
-import Toast from 'react-native-toast-message';
 import {
   GooglePlacesAutocomplete,
   GooglePlacesAutocompleteRef,
 } from 'react-native-google-places-autocomplete';
 import {setClubAddress, setLocation} from '../../redux/modules/clubSlice';
-import {useEffect, useRef, useState} from 'react';
 import {saveClubDateToFirestore} from '../../firebase/saveClubData';
+import Geolocation from 'react-native-geolocation-service';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 const OwnerRegister = () => {
   const dispatch = useDispatch();
@@ -20,7 +28,6 @@ const OwnerRegister = () => {
   const {userEmail, userPassword, userName} = useSelector(
     (state: RootState) => state.user,
   );
-
   const [address, setAddress] = useState('');
   const {clubName, location} = useSelector(
     (state: RootState) => state.club.currentClub,
@@ -33,6 +40,42 @@ const OwnerRegister = () => {
     handlePasswordChange,
     handleClubNameChange,
   } = useAuthForm();
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      const res = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      return res === RESULTS.GRANTED;
+    }
+
+    if (Platform.OS === 'android') {
+      const res = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      return res === PermissionsAndroid.RESULTS.GRANTED;
+    }
+
+    return false;
+  };
+
+  const handleUserCurrentLocation = async () => {
+    const hasPermission = await requestLocationPermission();
+
+    if (!hasPermission) {
+      console.log('Location permission not granted');
+      return;
+    }
+
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        console.log('position', position);
+      },
+      error => {
+        console.log('error Geolotacion, ', error);
+      },
+      {enableHighAccuracy: true, timeout: 1500, maximumAge: 10000},
+    );
+  };
 
   const generateGoogleMapsLink = (address: string) => {
     const encodedAddress = encodeURIComponent(address);
@@ -134,6 +177,10 @@ const OwnerRegister = () => {
         />
       </View>
       <Button title="Register!" onPress={handleOwnerRegister} />
+      <Button
+        title="Use current Location"
+        onPress={handleUserCurrentLocation}
+      />
       <Button
         title="Take me home"
         onPress={() => navigation.navigate('Login')}
