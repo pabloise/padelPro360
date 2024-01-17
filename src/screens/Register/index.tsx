@@ -31,10 +31,7 @@ const Register = () => {
       userPassword,
       userName,
       'normal',
-    ).catch(error => {
-      console.log('new error, ');
-      console.error(error);
-    });
+    ).catch(error => console.log('error in Register with Email, ', error));
   };
 
   const isGenderSelected = userGender !== null;

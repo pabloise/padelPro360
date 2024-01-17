@@ -25,9 +25,10 @@ const OwnerHome = () => {
             style={{width: 60, height: 60, borderRadius: 50}}
             source={require('../../assets/owner-avatar.png')}
           />
-          <Text>Welcome, {ownerName ? ownerName : user.userName}</Text>
+          <Text>Welcomeeee, {ownerName ? ownerName : user.userName}</Text>
           <Text>Club name: {clubName}</Text>
           <Text>Club Address: {address}</Text>
+          <Text>Hi from OWNER HOME for owner useres</Text>
         </View>
         <Button title="Logout" onPress={handleSignOut} />
       </View>

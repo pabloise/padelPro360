@@ -20,9 +20,10 @@ import BookingsItem from '../../components/BookingsItem';
 import Config from 'react-native-config';
 import firestore from '@react-native-firebase/firestore';
 import {setCurrentClub} from '../../redux/modules/clubSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
-  const {initializing, userEmail, userPassword, user} = useSelector(
+  const {initializing, userEmail, userPassword, userType} = useSelector(
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch();
@@ -36,9 +37,14 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(user => {
+    const subscriber = auth().onAuthStateChanged(async user => {
       if (user) {
-        navigate('Home');
+        const savedUserType = await AsyncStorage.getItem('userType');
+        const finalUserType = savedUserType || 'normal';
+
+        const clubData = await fetchClubData(user.uid);
+        clubData && dispatch(setCurrentClub(clubData));
+
         const userData: UserType = {
           displayName: user.displayName,
           email: user.email,
@@ -47,8 +53,10 @@ const Login = () => {
           photoURL: user.photoURL,
         };
         dispatch(setUser(userData));
+        finalUserType === 'owner' ? navigate('OwnerHome') : navigate('Home');
       } else {
         dispatch(setUser(null));
+        navigate('Login');
       }
       console.log('this is the user', user);
       if (initializing) {
@@ -56,7 +64,7 @@ const Login = () => {
       }
     });
     return subscriber;
-  }, [dispatch, initializing]);
+  }, [dispatch, initializing, navigate]);
 
   const onGoogleButtonPress = async () => {
     dispatch(setIsLoading(true));
@@ -70,7 +78,7 @@ const Login = () => {
       );
       return userCredential;
     } catch (error) {
-      console.log('Google error', error);
+      console.log('Google Services error', error);
     } finally {
       dispatch(setIsLoading(false));
     }
@@ -85,10 +93,14 @@ const Login = () => {
         clubName: clubData?.clubName,
         address: clubData?.address,
         googleMapsLink: clubData?.googleMapsLink,
-        location: clubData?.location,
+        location: {
+          lat: clubData?.location.latitude,
+          lng: clubData?.location.longitude,
+        },
         courts: clubData?.courts || [],
         ownerName: clubData?.ownerName,
       };
+      console.log('formatttedClubdata', formattedClubData);
       return formattedClubData;
     }
     return null;
@@ -96,7 +108,6 @@ const Login = () => {
 
   const SignInWithEmail = async () => {
     dispatch(setIsLoading(true));
-    navigate('Home');
     try {
       const userCredential = await auth().signInWithEmailAndPassword(
         userEmail,
@@ -106,6 +117,7 @@ const Login = () => {
       const clubData = await fetchClubData(userCredential.user.uid);
       if (clubData) {
         dispatch(setCurrentClub(clubData));
+        userType === 'owner' ? navigate('OwnerHome') : navigate('Home');
       }
     } catch (error) {
       console.log('SignInWithEmail Error: ', error);

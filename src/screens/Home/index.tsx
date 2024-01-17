@@ -5,6 +5,9 @@ import useLogout from '../../hooks/useLogout';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import OwnerHome from '../OwnerHome';
 import {AVATAR_IMAGES} from '../../constants/genderOptions';
+import {useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationProps} from '../../types/navigation';
 
 const Home = () => {
   const {handleSignOut} = useLogout();
@@ -65,6 +68,7 @@ const Home = () => {
             )}
             <Text>Welcome, {user?.displayName}</Text>
             <Text>{userGender}</Text>
+            <Text>Hi from HOME for normal useres</Text>
           </View>
           <Button title="Logout" onPress={handleSignOut} />
         </View>

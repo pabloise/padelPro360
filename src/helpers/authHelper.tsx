@@ -11,6 +11,7 @@ import Toast from 'react-native-toast-message';
 import {Dispatch} from 'redux';
 import {AnyAction} from '@reduxjs/toolkit';
 import {resetClub} from '../redux/modules/clubSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface FirebaseAuthError extends Error {
   code?: string;
@@ -26,7 +27,9 @@ export const RegisterWithEmail = async (
   onError?: () => void,
 ) => {
   dispatch(setIsLoading(true));
-  navigation.navigate('Home');
+  userType === 'normal'
+    ? navigation.navigate('Home')
+    : navigation.navigate('OwnerHome');
 
   try {
     const userCredential = await auth().createUserWithEmailAndPassword(
@@ -48,13 +51,12 @@ export const RegisterWithEmail = async (
 
     dispatch(setUserType(userType));
     dispatch(setUser(userData));
+    await AsyncStorage.setItem('userType', userType);
     Toast.show({
       type: 'success',
       text1: 'Success! ✅',
       text2: 'You have been registered! 🎾',
     });
-
-    navigation.navigate('Home');
 
     return userCredential.user;
   } catch (error) {

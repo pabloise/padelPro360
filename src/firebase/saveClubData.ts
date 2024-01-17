@@ -19,5 +19,5 @@ export const saveClubDateToFirestore = async (
 
   await firestore().collection('clubs').doc(userId).set(firestoreData);
 
-  console.log('Entro en firestore!!!');
+  console.log('In firestore successfully!');
 };

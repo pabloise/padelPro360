@@ -20,7 +20,8 @@ import {
 import {setClubAddress, setLocation} from '../../redux/modules/clubSlice';
 import {saveClubDateToFirestore} from '../../firebase/saveClubData';
 import Geolocation from 'react-native-geolocation-service';
-import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {setIsLoading} from '../../redux/modules/userSlice';
 
 const GOOGLE_API_KEY = 'AIzaSyC_tt9tAg7wHDoU8Zmno2PSeXfP5h6Rzfo';
 
@@ -44,8 +45,7 @@ const OwnerRegister = () => {
   } = useAuthForm();
 
   useEffect(() => {
-    setInputAddress(address);
-    if (placesRef.current) {
+    if (placesRef.current && address !== inputAddress) {
       placesRef.current.setAddressText(address);
     }
   }, [address]);
@@ -64,6 +64,15 @@ const OwnerRegister = () => {
     }
 
     return false;
+  };
+
+  // Clean address input if signup fails
+
+  const handleInputChange = (text: string) => {
+    setInputAddress(text);
+    if (text !== address) {
+      dispatch(setClubAddress(text));
+    }
   };
 
   const getAddressFromCoordinates = async (lat: number, lng: number) => {
@@ -85,9 +94,9 @@ const OwnerRegister = () => {
     Geolocation.getCurrentPosition(
       async position => {
         const {latitude, longitude} = position.coords;
+        dispatch(setLocation({lat: latitude, lng: longitude}));
         const address = await getAddressFromCoordinates(latitude, longitude);
         dispatch(setClubAddress(address));
-        console.log('This is the address', address);
       },
       error => {
         console.log('error Geolotacion, ', error);
@@ -102,6 +111,7 @@ const OwnerRegister = () => {
   };
 
   const handleOwnerRegister = async () => {
+    setIsLoading(true);
     try {
       const registeredOwner = await RegisterWithEmail(
         dispatch,
@@ -132,7 +142,7 @@ const OwnerRegister = () => {
         await saveClubDateToFirestore(registeredOwner.uid, clubData);
       }
     } catch (error) {
-      console.log('error desde ownerRegister', error);
+      console.log('error in OwnerRegister.tsx', error);
     }
   };
 
@@ -169,10 +179,7 @@ const OwnerRegister = () => {
         <GooglePlacesAutocomplete
           textInputProps={{
             value: inputAddress,
-            onChangeText: text => {
-              setInputAddress(text);
-              dispatch(setClubAddress(text));
-            },
+            onChangeText: handleInputChange,
           }}
           ref={placesRef}
           placeholder="Type the club address"
@@ -183,11 +190,8 @@ const OwnerRegister = () => {
           }}
           fetchDetails
           onPress={(data, details = null) => {
-            console.log('Data:', data);
-            console.log('Details:', details);
             if (details && details.geometry && details.geometry.location) {
               const {lat, lng} = details.geometry.location;
-              console.log('Latitude:', lat, 'Longitude:', lng);
               dispatch(setLocation({lat, lng}));
               if (data.description) {
                 dispatch(setClubAddress(data.description));
